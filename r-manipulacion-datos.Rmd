@@ -1,0 +1,85 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Manipulacion de datos
+
+```{r}
+library(haven)
+library(tidyverse)
+```
+
+```{r}
+
+Caracteristicas_y_composicion_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Caracteristicas y composicion del hogar.sav")
+
+Servicios_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Servicios del hogar.sav")
+
+```
+
+
+http://microdatos.dane.gov.co/index.php/catalog/607/datafile/F116
+
+```{r}
+
+```
+
+```{r}
+Caracteristicas_y_composicion_del_hogar
+```
+
+```{r}
+#extraccion numero de hijos
+nhijos <- Caracteristicas_y_composicion_del_hogar %>% 
+   filter(P6051==3, SECUENCIA_P == 1) %>%
+   group_by(DIRECTORIO) %>%
+   summarise(Hijos=n()) 
+
+barplot(table(nhijos$Hijos), main="Numero de hijos")
+
+```
+```{r}
+caracteristicas_hogar <- Caracteristicas_y_composicion_del_hogar %>% 
+   filter(P6051==1, SECUENCIA_P == 1) %>%
+   select(DIRECTORIO ,P6020, P6040, P5502, P6071, P5667)
+```
+
+```{r}
+#secuencia encuesta 1 para la primera encuesta que le hicieron al hogar
+servicios <- Servicios_del_hogar %>%
+   filter(SECUENCIA_ENCUESTA == 1) %>% 
+   select(DIRECTORIO, CANT_PERSONAS_HOGAR, I_HOGAR, P5010) 
+```
+
+```{r}
+
+#unir caracteristicas y nhijos a datos
+datos <- merge(x = caracteristicas_hogar, y = nhijos, by = "DIRECTORIO", all.x=TRUE, all.y=TRUE)
+
+```
+
+```{r}
+
+#unir datos con servicios 
+datos <- merge(x = datos, y = servicios, by = "DIRECTORIO", all.x = TRUE, all.y=TRUE)
+
+#reemplazar NA con 0 hijos
+datos <- datos %>% replace_na(list(Hijos = 0))
+```
+
+```{r}
+datos %>%
+   filter(CANT_PERSONAS_HOGAR == 0 & Hijos == 0)
+```
+
+
+```{r}
+plot(datos$CANT_PERSONAS_HOGAR,datos$Hijos)
+```
+
+
+```{r}
+write.csv(datos,"datos.csv", row.names = TRUE)
+```
+
