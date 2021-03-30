@@ -1,0 +1,107 @@
+---
+title: "RNNKeras"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+datos <- read.csv("datos.csv")
+```
+
+```{r}
+head(datos)
+```
+
+
+```{r}
+datos <- datos %>%
+  mutate_if(is.character, as.factor)
+```
+
+```{r}
+datos= datos [, c(1,2,3,4,5,6,7,9,10,11,8)]
+```
+
+```{r}
+head(datos)
+```
+X1= directorio
+X2= p6020
+X3= p6040
+X4= p5502
+X5= p6071
+X6= P5667
+X6= cant_personas_hogar
+X7= i_hogar
+X8= p5010
+Y= hijos
+
+```{r}
+colnames(datos) <- c("X", "X1", "X2","X3", "X4","X5", "X6","X7","X8", "X9", "Y")
+```
+
+```{r}
+head(datos)
+```
+
+```{r}
+datos_sel <- subset(datos, select= c('X2','X3','X4','X5','X6','X7','X8','Y'))
+```
+
+
+
+```{r}
+library(keras)
+library(tensorflow)
+install_tensorflow()
+
+```
+
+```{r}
+datos_sel2 <- subset(datos, select= c('X2','X3','X4','X5','X7','X8','Y'))
+```
+
+```{r}
+datos_sel2
+
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 12, activation = 'relu', input_shape = c(6)) %>% 
+  layer_dense(units = 8, activation = 'relu') %>%
+  layer_dense(units = 1, activation = 'sigmoid')
+```
+
+```{r}
+summary(model)
+```
+```{r}
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+```
+
+```{r}
+
+library(keras)
+library(lime)
+library(tidyquant)
+
+library(recipes)
+library(yardstick)
+library(corrr)
+```
+
+```{r}
+library(rsample)
+```
+
+
