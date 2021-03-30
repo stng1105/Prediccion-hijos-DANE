@@ -1,10 +1,10 @@
 library(shiny)
 
+#use_python("/usr/local/bin/python")
 #======================================================================================#
 # Definir el UI para la
 # Inicio UI
 ui <- fluidPage(
-    
     # titulos
     titlePanel(
         "Predicción de Hijos en Hogares Colombianos basado en datos del DANE"
@@ -92,7 +92,7 @@ ui <- fluidPage(
 # fin UI
 
 #======================================================================================#
-# Define server logic 
+# Define server logic
 
 #inicio server
 server <- function(input, output) {
@@ -103,8 +103,8 @@ server <- function(input, output) {
     })
     
     output$textoPrediccion <- renderText({
-        paste("<p>Tu edad + 10: ",
-              modelo(input$edad),
+        paste("<p>Resultado de python: ",
+              modelo(input$genero, input$edad, input$personas),
               "</p>")
     })
 }
@@ -112,9 +112,17 @@ server <- function(input, output) {
 
 #======================================================================================#
 # funciones
-modelo <- function(edad){
+modelo <- function(genero, edad, personas) {
     #aca se puede llamar a un modelo
-    return(edad+10)
+    resultado <-
+        system(paste(
+            c("python", "example.py", genero, edad, personas),
+            collapse = " "
+        ),
+        wait = TRUE,
+        intern = T)
+    
+    return(resultado)
 }
 #fin funciones
 #======================================================================================#
