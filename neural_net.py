@@ -65,7 +65,7 @@ Y_data = np.vectorize(float)(Y_data)
 Y_mean = np.mean(Y_data, axis=1) 
 Y_std = np.std(Y_data, axis=1)
 Y_data =  (Y_data - Y_mean) / Y_std
-#(1,m)-matrix containing the labels (number of children) of the instances/households
+#Y_data is (1,m)-matrix containing the labels (number of children) of the instances/households
 
 #(n_x+1,m)-matrix where every column is a vector containing all attributes and the label of one instance
 Data = np.append(X_data, Y_data, axis=0)
