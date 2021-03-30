@@ -30,15 +30,18 @@ import pickle
 """Read in data set (there are m instances with n_x attributes and a label which equals the number of children)"""
 f = open("data2.txt",'r').read().split('\n')
 
+#transform data into list of lists, where every inner list is a household and its elements are the attributes of this household
 data_temp = []
 for instance in f:
 	data_temp.append(instance.split(","))
 
+#replace all entries "NA" with zero, such that column 5 becomes a numerical variable
 for a in range(len(data_temp)):
 	for b in range(len(data_temp[0])):
 		if data_temp[a][b] == "NA":
 			data_temp[a][b] = 0
 
+#transform list of lists into array/matrix. It has dimension m=88713x11, so every row is a houshold
 data_temp = np.array(data_temp)
 data_temp = np.array([np.array(row) for row in data_temp])
 #optionally set seed for better results
@@ -46,21 +49,23 @@ np.random.seed(0)
 #shuffle data
 np.random.shuffle(data_temp)
 
-#(n_x,m)-matrix where every column is a vector containing all attributes of one instance
+#choose columns (attributes of households) that should be considered, create matriz and transpose it
 X_data = data_temp[:,[2,3,4,5,8,9,10]].T #choose columns that shall be considered			
 X_data = np.vectorize(float)(X_data)
 #standardize
 X_mean = np.mean(X_data, axis=1).reshape(X_data.shape[0],1)
 X_std = np.std(X_data, axis=1).reshape(X_data.shape[0],1)
 X_data = (X_data - X_mean) / X_std
+#so X-data is (n_x,m)-matrix, where every column is a vector containing all attributes of one instance
 
-#(1,m)-matrix containing the labels of the instances
+#choose column 7, containing the number of children of an household which will be our label. Create matriz and transpose it
 Y_data =data_temp[:,[7]].T
 Y_data = np.vectorize(float)(Y_data)
 #standardize
 Y_mean = np.mean(Y_data, axis=1) 
 Y_std = np.std(Y_data, axis=1)
 Y_data =  (Y_data - Y_mean) / Y_std
+#(1,m)-matrix containing the labels (number of children) of the instances/households
 
 #(n_x+1,m)-matrix where every column is a vector containing all attributes and the label of one instance
 Data = np.append(X_data, Y_data, axis=0)
@@ -174,7 +179,7 @@ def update_parameters(parameters,grads,learning_rate):
 	return parameters
 
 #find out how many instances were actually classified correctly
-def precision(Y,Y_hat):
+def accuracy(Y,Y_hat):
 	correct = 0
 	wrong = 0
 	#destandardize data
@@ -187,7 +192,7 @@ def precision(Y,Y_hat):
 			correct += 1
 		else:
 			wrong += 1
-	print("Precision is " + str(round((correct*100)/(correct+wrong),2))+"%")
+	print("Accuracy is " + str(round((correct*100)/(correct+wrong),2))+"%")
 
 #read in former saved parameters
 def read_parameters():
@@ -239,7 +244,7 @@ def neural_net(X,Y,n_h,learning_rate,epochs, cost_goal = 0, print_cost = False, 
 	final_cost = cost_func(Y,Y_hat)
 	
 	print("final cost is " + str(final_cost))									
-	precision(Y,Y_hat)															
+	accuracy(Y,Y_hat)															
 	
 	#save obtained parameters in different text-file
 	if save:
@@ -288,7 +293,7 @@ def cross_validate(k,n_h,learning_rate,epochs, read = False, save = False):
 		#store final cost
 		cost = cost_func(Y_test,Y_hat)
 		print("test-cost = " + str(cost))
-		precision(Y_test,Y_hat)
+		accuracy(Y_test,Y_hat)
 		print("")
 		costs.append(cost)
 
@@ -313,4 +318,4 @@ def label_new_data(X):
 	#round label to integer
 	Y_hat =  np.round(Y_hat)
 
-	return Y_hat 
+	return Y_hat
