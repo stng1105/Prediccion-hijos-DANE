@@ -1,0 +1,226 @@
+---
+title: "EnsayoKnn"
+author: "Juan Jose Hurtado Alvarez"
+date: "22/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
+```
+
+
+```{r}
+datos <- read.csv("datos.csv")
+```
+
+```{r}
+head(datos)
+```
+
+
+```{r}
+datos <- datos %>%
+  mutate_if(is.character, as.factor)
+```
+
+```{r}
+datos= datos [, c(1,2,3,4,5,6,7,9,10,11,8)]
+```
+
+```{r}
+head(datos)
+```
+X1= directorio
+X2= p6020
+X3= p6040
+X4= p5502
+X5= p6071
+X6= P5667
+X6= cant_personas_hogar
+X7= i_hogar
+X8= p5010
+Y= hijos
+
+```{r}
+colnames(datos) <- c("X", "X1", "X2","X3", "X4","X5", "X6","X7","X8", "X9", "Y")
+```
+
+```{r}
+head(datos)
+```
+
+```{r}
+datos_sel <- subset(datos, select= c('X2','X3','X4','X5','X6','X7','X8','Y'))
+```
+
+```{r}
+head(datos_sel)
+```
+
+```{r}
+any(is.na(datos_sel$X8))
+```
+
+
+
+```{r}
+library(caret)
+set.seed(2019092)
+ctrl<-trainControl(method = "LGOCV",p=0.75,number = 20)
+modelo_entrenamiento<-train(Y ~ X2+X3+X4+X6+X7+X8,
+             data       = datos_sel,
+             method     = "knn",
+             preProcess = c("center","scale"),
+             tuneGrid   = expand.grid(k = 1:30),
+             trControl  = ctrl,
+             metric     = "RMSE")
+```
+
+```{r}
+print(modelo_entrenamiento)
+```
+
+```{r}
+library(keras)
+library(tensorflow)
+install_tensorflow()
+
+```
+
+```{r}
+datos_sel2 <- subset(datos, select= c('X2','X3','X4','X5','X7','X8','Y'))
+```
+
+```{r}
+datos_sel2
+
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  layer_dense(units = 12, activation = 'relu', input_shape = c(6)) %>% 
+  layer_dense(units = 8, activation = 'relu') %>%
+  layer_dense(units = 1, activation = 'sigmoid')
+```
+
+```{r}
+summary(model)
+```
+```{r}
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+```
+
+```{r}
+
+library(keras)
+library(lime)
+library(tidyquant)
+
+library(recipes)
+library(yardstick)
+library(corrr)
+```
+
+```{r}
+library(rsample)
+```
+
+```{r}
+train_test_split <- initial_split(datos_sel, prop=0.8)
+(train_test_split)
+```
+
+```{r}
+train_tbl <- training(train_test_split)
+test_tbl  <- testing(train_test_split) 
+```
+
+
+```{r}
+test_tbl
+```
+
+```{r}
+x_train_tbl <- train_tbl[, 1:7]
+x_test_tbl <- test_tbl[, 1:7]
+```
+
+```{r}
+y_train_vec <- train_tbl[, 'Y']
+y_test_vec <- test_tbl[, 'Y']
+```
+
+```{r}
+glimpse(x_train_tbl)
+```
+
+```{r}
+history <- model %>% fit(
+  x_train_tbl, y_train_vec, 
+  epochs = 30, batch_size = 128, 
+  validation_split = 0.2
+)
+```
+
+```{r}
+# Building our Artificial Neural Network
+model_keras <- keras_model_sequential()
+
+model_keras %>% 
+  
+  # First hidden layer
+  layer_dense(
+    units              = 16, 
+    kernel_initializer = "uniform", 
+    activation         = "relu", 
+    input_shape        = ncol(x_train_tbl)) %>% 
+  
+  # Dropout to prevent overfitting
+  layer_dropout(rate = 0.1) %>%
+  
+  # Second hidden layer
+  layer_dense(
+    units              = 16, 
+    kernel_initializer = "uniform", 
+    activation         = "relu") %>% 
+  
+  # Dropout to prevent overfitting
+  layer_dropout(rate = 0.1) %>%
+  
+  # Output layer
+  layer_dense(
+    units              = 1, 
+    kernel_initializer = "uniform", 
+    activation         = "sigmoid") %>% 
+  
+  # Compile ANN
+  compile(
+    optimizer = 'adam',
+    loss      = 'binary_crossentropy',
+    metrics   = c('accuracy')
+  )
+
+
+```
+
+
+
+```{r}
+history <- fit(
+  object           = model_keras, 
+  x                = as.matrix(x_train_tbl), 
+  y                = y_train_vec,
+  batch_size       = 50, 
+  epochs           = 35,
+  validation_split = 0.30
+)
+```
+
