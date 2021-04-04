@@ -10,6 +10,12 @@ ui <- fluidPage(
         "Predicción de Hijos en Hogares Colombianos basado en datos del DANE"
     ),
     h4("Introduce las variables correspondientes:"),
+    h5(
+        a(
+            href = "https://htmlpreview.github.io/?https://github.com/julian4u0/Prediccion-hijos-DANE/blob/main/Informe.html",
+            "Informe del aplicativo"
+        )
+    ),
     
     # En side bar panel van todos los selectores
     sidebarLayout(
@@ -103,9 +109,11 @@ server <- function(input, output) {
     })
     
     output$textoPrediccion <- renderText({
-        paste("<p>Resultado de python: ",
-              modelo(input$genero, input$edad, input$personas),
-              "</p>")
+        paste(
+            "<p>Resultado de python: ",
+            modelo(input$genero, input$edad, input$personas),
+            "</p>"
+        )
     })
 }
 #fin server
