@@ -350,6 +350,6 @@ def label_new_data(X):
 	#destandardize label
 	Y_hat = Y_hat * Y_std + Y_mean
 	#round label to integer
-	Y_hat =  np.round(Y_hat)
+	Y_hat =  round(Y_hat[0][0])
 
 	return Y_hat
