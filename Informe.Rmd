@@ -48,7 +48,7 @@ Primeramente se seleccionaron las variables a anlaizar y se abicaron en un archi
 
 #####Red Neuronal
 
-La red neuronal tiene un hidden layer con 70 hidden units, con función de activación Leaky Relu, el output-layer tiene la dimensión 1 y no hay una función de activación, la cost-function es el MSE y la red se entrenó usando gradient descent, para testear la red se usó k-fold crossvalidation, para lo que se obtuvó un MSE de más o menos 0.25, o sea un RMSE de 0.5 y una accuracy de casi 74%, y bajo estos resultados, se dio por convincente el rendimiento de la red neuronal.
+La red neuronal que se utilizó tiene un hidden layer con 70 hidden units, con función de activación Leaky Relu, el output-layer tiene la dimensión 1 y no hay una función de activación, la cost-function es el MSE y la red se entrenó usando gradient descent, para testear la red se usó k-fold crossvalidation, para lo que se obtuvó un MSE de más o menos 0.25, o sea un RMSE de 0.5 y una accuracy de casi 74%, y bajo estos resultados, se dio por convincente el rendimiento de la red neuronal.
 Para evaluar un nuevo hogar, su vetor de atributos es estandardizado y despues pasa toda la red neuronal (usando los parametros que se obtuvieron durante el entrenamiento) para obtener una estimación "y_hat" y este "y_hat" se destandariza y finalmente se redondeado para obtener la predicción.
 
 ## Resultado
