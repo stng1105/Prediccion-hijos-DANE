@@ -14,12 +14,18 @@ library(tidyverse)
 
 ```{r}
 
+<<<<<<< HEAD
 
 Caracteristicas_y_composicion_del_hogar <- read_sav("Caracteristicas y composicion del hogar.sav")
 
 Servicios_del_hogar <- read_sav("Servicios del hogar.sav" )
 
 
+=======
+#Caracteristicas_y_composicion_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Caracteristicas y composicion del hogar.sav")
+
+#Servicios_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Servicios del hogar.sav")
+>>>>>>> 575a674479f60f6deeeaee286ea0a252b67ec495
 
 ```
 
@@ -36,6 +42,8 @@ Caracteristicas_y_composicion_del_hogar
 
 ```{r}
 #extraccion numero de hijos
+
+#se filtra P6051 == 3 
 nhijos <- Caracteristicas_y_composicion_del_hogar %>% 
    filter(P6051==3, SECUENCIA_P == 1) %>%
    group_by(DIRECTORIO) %>%
@@ -44,6 +52,10 @@ nhijos <- Caracteristicas_y_composicion_del_hogar %>%
 barplot(table(nhijos$Hijos), main="Numero de hijos")
 
 ```
+
+
+
+
 ```{r}
 caracteristicas_hogar <- Caracteristicas_y_composicion_del_hogar %>% 
    filter(P6051==1, SECUENCIA_P == 1) %>%

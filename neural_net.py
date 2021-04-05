@@ -278,16 +278,16 @@ def fold_data(i,k):
 	return(X_train,Y_train,X_test,Y_test)
 
 #Use k-fold cross validation to get a mean test_error and get the parameters using entire dataset
-def cross_validate(k,n_h,learning_rate,epochs, read = False, save = False):
+def cross_validate(k,n_h,learning_rate,epochs, mean_cost_goal = 0, print_cost = False, read = False, save = False):
 	#store all costs	
 	costs = []
-	#repeat regression k-times, always using different test-set												
+	#repeat neural net training k-times, always using different test-set												
 	for i in range(k):
 		print(str(i+1) + " of " +str(k))
 		#split Dataset into training-data and test-data
 		X_train,Y_train,X_test,Y_test = fold_data(i,k)
 		#train model
-		parameters = neural_net(X_train,Y_train,n_h,learning_rate,epochs, read = read_parameters)
+		parameters = neural_net(X_train,Y_train,n_h,learning_rate,epochs, print_cost = print_cost, read = read)
 		#test gained parameters
 		Y_hat = two_layer_forward(X_test,parameters)[0] 		
 		#store final cost
@@ -299,10 +299,44 @@ def cross_validate(k,n_h,learning_rate,epochs, read = False, save = False):
 
 	#calculate mean_cost of all regressions
 	mean_cost = np.mean(costs)
+	#safe ressults
+	if mean_cost < mean_cost_goal:
+		save = True
 	#now compute parameters with entire dataset
-	parameters = neural_net(X_data,Y_data,n_h,learning_rate,epochs, read = read_parameters, save = save_parameters)
+	parameters = neural_net(X_data,Y_data,n_h,learning_rate,epochs, print_cost = print_cost, read = read, save = save)
 	#show results
 	print("mean-cost = "+str(mean_cost))
+	return(parameters)
+
+#Alternative use of k-fold Cross-Validation: Return parameters of set with best test-costs:
+def alt_cross_validate(k,n_h,learning_rate,epochs, least_cost_goal = 0, print_cost = False, read = False, save = False):
+	#store costs and their belonging parameters
+	output = []
+	#repeat neural net training k-times, always using different test-set											
+	for i in range(k):
+		print(str(i+1) + " of " +str(k))
+		#split Dataset into training-data and test-data
+		X_train,Y_train,X_test,Y_test = fold_data(i,k)
+		#train model
+		parameters = neural_net(X_train,Y_train,n_h,learning_rate,epochs, print_cost = print_cost, read = read)
+		#test gained parameters
+		Y_hat = two_layer_forward(X_test,parameters)[0]
+		#store final cost and the belonging parameters
+		cost = cost_func(Y_test,Y_hat)
+		print("test-cost = " + str(cost))
+		accuracy(Y_test,Y_hat)
+		print("")
+		output.append((cost,parameters))
+
+	#choose the parameters which produce the least cost
+	cost,parameters = min(output)
+	#save parameters
+	if cost < least_cost_goal:
+		save = True
+	if save:
+		save_parameters(parameters)
+	#show results								
+	print("least cost = "+str(cost))
 	return(parameters)
 
 #one can import the following function from a different file to use the neural network and the obtained parameters from this file to make a prediction on new date
@@ -316,6 +350,6 @@ def label_new_data(X):
 	#destandardize label
 	Y_hat = Y_hat * Y_std + Y_mean
 	#round label to integer
-	Y_hat =  np.round(Y_hat)
+	Y_hat =  round(Y_hat[0][0])
 
 	return Y_hat

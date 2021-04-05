@@ -1,0 +1,61 @@
+---
+title: "Informe"
+author: "Nombre de los integrantes: <br>Julian Alejandro Usuga Ortiz<br> Juan Jose Hurtado Alvarez<br> Diego de Oliveira Hitzges<br>"
+date: "4/4/2021"
+output: html_document
+---
+
+
+<br>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introducción
+
+Este aplicativo se realiza con la motivacion de realizar un trabajo analitico para llegar a un dato bastante útil como lo es el numero de hijos usando tecnicas de aprendizaje estadistico modernas en datos abiertos proporcionados por el DANE (Departamento Administrativo Nacional de Estadística).
+
+Esta encuesta fue realizada en el 2019 y recoge datos de los servicios de los hogares, composicion de los hogares, entre otros.
+
+
+## Retos
+
+Como en cualquier problema de datos, estos no estaban inicialmente en un formato que nos pudiera analizarlos con facilidad, el primer reto fue que los encabezados de las columnas no tenian un identificador facil de diferenciar, asi que tuvimos que recurrir varias veces a la documentacion de la encuesta para poder saber con que variables tratabamos.
+Otro reto fue unir las bases de datos ya que estas estan separadas, elegir muy bien cuales usar ya que no todas ayudan a estimar correctamente el numero de hijos y podrian dañar nuestro modelo predictivo.
+
+## Materiales
+
+Para nuestro trabajo preditivo usamos las siguientes herramientas
+Lenguajes de programación
+
+* Datos publicos de la Encuesta Nacional de Calidad de Vida [Click para visitar sitio](http://microdatos.dane.gov.co/index.php/catalog/678/data_dictionary)
+* Lenguajes de programacion
+    + R
+    + Python
+* Paquete para la manipulacion de datos
+    + Tidyverse
+* Paquete Shiny para aplicaciones web
+* Paquete de modelos predictivos
+    + Keras
+
+Tambien usamos nuestros modelos ... 
+
+## Metodos 
+
+Descripcion de los metodos usados (que modelo, etc) <!--------- FALTA AQUI --------->
+
+## Resultado
+
+El resultado de nuestro trabajo se puede evidenciar en el aplicativo, nuestro modelo tiene un error de __ <!--------- FALTA AQUI ---------> lo cual significa que para de acuerdo a los parametros entrados por el usuario, este tiene ....<!--------- FALTA AQUI --------->
+
+
+## Conclusiones
+<!--------- FALTA AQUI --------->
+## Bibliografia
+
+https://www.elheraldo.co/colombia/en-ultimos-48-anos-colombianas-pasaron-de-tener-siete-hijos-dos-310604
+
+https://www.elespectador.com/noticias/salud/en-colombia-las-mujeres-tienen-menos-hijos-y-los-hogares-de-solteros-aumentaron/
+<!--------- FALTA AQUI --------->
