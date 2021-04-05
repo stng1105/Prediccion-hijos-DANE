@@ -69,7 +69,7 @@ glimpse(datos_sel)
 
 ```{r}
 dataset <- datos_sel %>%
-   select(-X5) %>%
+   select(-X6) %>%
    drop_na() %>%
    select (Y, everything())
 
@@ -116,6 +116,9 @@ y_train_vec <- pull(train_tbl, Y)
 y_test_vec <- pull(test_tbl, Y)
 ```
 
+```{r}
+ ncol(x_train_tbl)
+```
 
 
 ```{r}
@@ -167,6 +170,11 @@ history <- fit(
   y                = y_train_vec,
   batch_size       = 50, 
   epochs           = 35,
-  validation_split = 0.30
+  validation_split = 0.10
 )
 ```
+
+```{r}
+plot(history)
+```
+

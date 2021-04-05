@@ -14,18 +14,21 @@ library(tidyverse)
 
 ```{r}
 
-Caracteristicas_y_composicion_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Caracteristicas y composicion del hogar.sav")
 
-Servicios_del_hogar <- read_sav("C:/Users/julia/Downloads/Encuesta Calidad de Vida/Servicios del hogar.sav")
+Caracteristicas_y_composicion_del_hogar <- read_sav("Caracteristicas y composicion del hogar.sav")
+
+Servicios_del_hogar <- read_sav("Servicios del hogar.sav" )
+
+
 
 ```
+
+
+
 
 
 http://microdatos.dane.gov.co/index.php/catalog/607/datafile/F116
 
-```{r}
-
-```
 
 ```{r}
 Caracteristicas_y_composicion_del_hogar
@@ -45,13 +48,16 @@ barplot(table(nhijos$Hijos), main="Numero de hijos")
 caracteristicas_hogar <- Caracteristicas_y_composicion_del_hogar %>% 
    filter(P6051==1, SECUENCIA_P == 1) %>%
    select(DIRECTORIO ,P6020, P6040, P5502, P6071, P5667)
+caracteristicas_hogar
 ```
+
 
 ```{r}
 #secuencia encuesta 1 para la primera encuesta que le hicieron al hogar
 servicios <- Servicios_del_hogar %>%
    filter(SECUENCIA_ENCUESTA == 1) %>% 
    select(DIRECTORIO, CANT_PERSONAS_HOGAR, I_HOGAR, P5010) 
+servicios
 ```
 
 ```{r}
@@ -73,15 +79,63 @@ datos <- datos %>% replace_na(list(Hijos = 0))
 ```{r}
 datos %>%
    filter(CANT_PERSONAS_HOGAR == 0 & Hijos == 0)
+
 ```
 
 
 ```{r}
 plot(datos$CANT_PERSONAS_HOGAR,datos$Hijos)
 ```
+```{r}
+datos
+```
 
 
 ```{r}
 write.csv(datos,"datos.csv", row.names = TRUE)
 ```
+
+
+```{r}
+datos_vivienda <- read_sav("Datos de la vivienda.sav" )
+```
+
+```{r}
+datos_vivienda
+```
+
+
+
+
+```{r}
+source("datosNA.R")
+sel<-seleccionar(datos_vivienda)
+sel
+```
+
+```{r}
+datos_vivienda <- datos_vivienda %>%
+   filter(SECUENCIA_ENCUESTA == 1) %>% 
+   select(sel ) %>%
+   select(-SECUENCIA_ENCUESTA,-SECUENCIA_P, -ORDEN, -FEX_C)
+
+datos_vivienda
+```
+```{r}
+nuevos_datos <- merge(x = datos, y = datos_vivienda, by = "DIRECTORIO", all.x = TRUE, all.y=TRUE)
+```
+
+```{r}
+nuevos_datos
+```
+
+```{r}
+sel<-seleccionar(nuevos_datos)
+length(sel)
+```
+
+```{r}
+write.csv(nuevos_datos,"nuevos_datos.csv", row.names = TRUE)
+```
+
 
